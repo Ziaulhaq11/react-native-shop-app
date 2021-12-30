@@ -28,13 +28,13 @@ const Input = (props) => {
         touched : false
     })
 
-    const {onInputChange} = props //Extracted this bc we use this func in useEfect otherwise we will be getting infinite loop
+    const {onInputChange,id} = props //Extracted this bc we use this func in useEfect otherwise we will be getting infinite loop
 
     useEffect(() => {
       if (inputState.touched) {
-        onInputChange(inputState.value, inputState.isValid);
+        onInputChange(id,inputState.value, inputState.isValid);
       }
-    }, [inputState, onInputChange]);
+    }, [inputState, onInputChange,id]);
 
     const textChangeHandler = text => {
         const emailRegex =
@@ -72,10 +72,14 @@ const Input = (props) => {
         {...props}
         style={styles.input}
         value={inputState.value}
-              onChangeText={textChangeHandler}
-              onBlur={lostFocusHandler}
+        onChangeText={textChangeHandler}
+        onBlur={lostFocusHandler}
       />
-      {!inputState.isValid && <Text>{props.errorText}</Text>}
+      {!inputState.isValid && inputState.touched && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{props.errorText}</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -93,7 +97,13 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderBottomColor: "#ccc",
     borderBottomWidth: 1,
-  },
+    },
+    errorContainer: {
+      marginVertical : 5
+    },
+    errorText: {
+        color : 'red'
+    }
 });
 
 export default Input;

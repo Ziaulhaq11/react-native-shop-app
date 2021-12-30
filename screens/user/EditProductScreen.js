@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useCallback, useReducer } from "react";
 import {
   View,
-  Text,
   StyleSheet,
-  TextInput,
   ScrollView,
   Alert,
+  KeyboardAvoidingView,
 } from "react-native";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useSelector, useDispatch } from "react-redux";
 import * as productActions from "../../store/actions/products";
-import Input from '../../components/UI/Input'
+import Input from "../../components/UI/Input";
 
 const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
 //Created outside to prevent unnecessary renders
@@ -27,9 +26,8 @@ const formReducer = (state, action) => {
     };
     let updatedFormIsValid = true;
     for (const key in updatedValidities) {
-      console.log(updatedFormIsValid)
+      console.log(updatedFormIsValid);
       updatedFormIsValid = updatedFormIsValid && updatedValidities[key]; //if one is false the entire thing will false
-
     }
     return {
       // ...state,not required
@@ -40,8 +38,6 @@ const formReducer = (state, action) => {
   }
   return state;
 };
-
-
 
 const EditProductScreen = (props) => {
   const prodId = props.navigation.getParam("productId");
@@ -70,7 +66,7 @@ const EditProductScreen = (props) => {
     formIsValid: editedProduct ? true : false,
   });
 
-const { title, description, price, imageUrl } = formState.inputValues;
+  const { title, description, price, imageUrl } = formState.inputValues;
 
   const submitHandler = useCallback(() => {
     if (!formState.formIsValid) {
@@ -89,73 +85,86 @@ const { title, description, price, imageUrl } = formState.inputValues;
       );
     }
     props.navigation.goBack();
-  }, [
-    dispatch,
-    editedProduct,
-    prodId,
-    formState
-  ]);
-  console.log(formState)
+  }, [dispatch, editedProduct, prodId, formState]);
+  console.log(formState);
 
   useEffect(() => {
     props.navigation.setParams({ submit: submitHandler });
   }, [submitHandler]);
 
-  const inputChangeHandler = useCallback((inputIdentifier, inputValue, inputValidity) => {
-    dispatchFormState({
-      type: FORM_INPUT_UPDATE,
-      value: inputValue,
-      isValid: inputValidity,
-      input: inputIdentifier,
-    });
-  }, [dispatchFormState]);
+  const inputChangeHandler = useCallback(
+    (inputIdentifier, inputValue, inputValidity) => {
+      dispatchFormState({
+        type: FORM_INPUT_UPDATE,
+        value: inputValue,
+        isValid: inputValidity,
+        input: inputIdentifier,
+      });
+    },
+    [dispatchFormState]
+  );
 
   return (
-    <ScrollView>
-      <View style={styles.form}>
-        <Input
-          label="Title"
-          errorText="Please enter a valid title!"
-          keyboardType="default"
-          autoCapitalize="sentences"
-          autoCorrect
-          returnKeyType="next" //it doesnt do anything it just icons
-          onInputChange={inputChangeHandler.bind(this, "title")}
-          initialValue={editedProduct ? editedProduct.title : ""}
-          initialValid={!!editedProduct} //!! means here if value is there then true otherwise false
-        />
-        <Input
-          label="Image Url"
-          errorText="Please enter a valid image url!"
-          keyboardType="default"
-          returnKeyType="next"
-          onInputChange={inputChangeHandler.bind(this, "imageUrl")}
-          initialValue={editedProduct ? editedProduct.imageUrl : ""}
-          initialValid={!!editedProduct}
-        />
-        {editedProduct ? null : (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }} //This will lift up our view for the bottom page when keyboard pops it wont take space in our view instead it just lifts our view
+      behavior="height"
+      keyboardVerticalOffset={100}
+    >
+      <ScrollView>
+        <View style={styles.form}>
           <Input
-            label="Price"
-            errorText="Please enter a valid price!"
-            keyboardType="decimal-pad"
-            returnKeyType="next"
-            onInputChange={inputChangeHandler.bind(this, "price")}
+            id="title" //previously we dont have id we are passing title as params in inputChangeHandler but it is causing rerendering and application is not wokring at all
+            label="Title"
+            errorText="Please enter a valid title!"
+            keyboardType="default"
+            autoCapitalize="sentences"
+            autoCorrect
+            returnKeyType="next" //it doesnt do anything it just icons
+            onInputChange={inputChangeHandler}
+            initialValue={editedProduct ? editedProduct.title : ""}
+            initialValid={!!editedProduct} //!! means here if value is there then true otherwise false
+            required
           />
-        )}
-        <Input
-          label="Description"
-          errorText="Please enter a valid description!"
-          keyboardType="default"
-          autoCapitalize="sentences"
-          autoCorrect
-          multiline
-          numberOfLines={3}
-          onInputChange={inputChangeHandler.bind(this, "description")}
-          initialValue={editedProduct ? editedProduct.description : ""}
-          initialValid={!!editedProduct}
-        />
-      </View>
-    </ScrollView>
+          <Input
+            id="imageUrl"
+            label="Image Url"
+            errorText="Please enter a valid image url!"
+            keyboardType="default"
+            returnKeyType="next"
+            onInputChange={inputChangeHandler}
+            initialValue={editedProduct ? editedProduct.imageUrl : ""}
+            initialValid={!!editedProduct} 
+            required
+          />
+          {editedProduct ? null : (
+            <Input
+              id="price"
+              label="Price"
+              errorText="Please enter a valid price!"
+              keyboardType="decimal-pad"
+              returnKeyType="next"
+              onInputChange={inputChangeHandler}
+              required
+              min={0.1}
+            />
+          )}
+          <Input
+            id="description"
+            label="Description"
+            errorText="Please enter a valid description!"
+            keyboardType="default"
+            autoCapitalize="sentences"
+            autoCorrect
+            multiline
+            numberOfLines={3}
+            onInputChange={inputChangeHandler}
+            initialValue={editedProduct ? editedProduct.description : ""}
+            initialValid={!!editedProduct}
+            required
+          />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -183,7 +192,6 @@ const styles = StyleSheet.create({
   form: {
     margin: 20,
   },
-  
 });
 
 export default EditProductScreen;
