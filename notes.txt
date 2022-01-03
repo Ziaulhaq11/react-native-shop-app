@@ -1,3 +1,5 @@
+https://rm-shop-app-1c2e8-default-rtdb.firebaseio.com/
+
 Ionicons issue
 
 uninstall expo-font from node modules
@@ -24,3 +26,6 @@ And also for DrawerNavigator (also used later in this module):
 
 npm install --save react-navigation-drawer
 import { createDrawerNavigator } from 'react-navigation-drawer';
+
+THUNK : A function that delays an action until later 
+An action creator function that does NOT return the action itself but another function which eventually return the function

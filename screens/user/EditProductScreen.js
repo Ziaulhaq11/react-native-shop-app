@@ -26,7 +26,7 @@ const formReducer = (state, action) => {
     };
     let updatedFormIsValid = true;
     for (const key in updatedValidities) {
-      console.log(updatedFormIsValid);
+      // console.log(updatedFormIsValid);
       updatedFormIsValid = updatedFormIsValid && updatedValidities[key]; //if one is false the entire thing will false
     }
     return {
@@ -86,7 +86,7 @@ const EditProductScreen = (props) => {
     }
     props.navigation.goBack();
   }, [dispatch, editedProduct, prodId, formState]);
-  console.log(formState);
+  // console.log(formState);
 
   useEffect(() => {
     props.navigation.setParams({ submit: submitHandler });

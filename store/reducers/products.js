@@ -15,7 +15,8 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case CREATE_PRODUCT:
       const newProduct = new Product(
-        new Date().toString(),
+        // new Date().toString(), Previously we generated locally but now we are generating from server
+        action.productData.id,
         "u1",
         action.productData.title,
         action.productData.imageUrl,

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import { createStore,combineReducers } from 'redux';
+import { createStore,combineReducers,applyMiddleware } from 'redux';
 import { Provider } from 'react-redux'
+import ReduxThunk from 'redux-thunk'
 import productsReducer from './store/reducers/products';
 import cartReducer from './store/reducers/cart';
 import ShopNavigator from './navigation/ShopNavigator';
@@ -14,7 +15,7 @@ const rootReducer = combineReducers({
   orders : ordersReducer
 });
 
-const store = createStore(rootReducer)//composeWithDevTools()
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk))//composeWithDevTools()
 let customFonts = {
   'OpenSans': require("./assets/fonts/OpenSans-Regular.ttf"),
   'OpenSansBold': require("./assets/fonts/OpenSans-Bold.ttf"),

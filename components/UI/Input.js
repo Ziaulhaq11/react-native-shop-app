@@ -61,7 +61,6 @@ const Input = (props) => {
     }
 
     const lostFocusHandler = () => {
-        console.log('blur')
         dispatch({ type : INPUT_BLUR })
     }
 
