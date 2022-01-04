@@ -29,3 +29,5 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 
 THUNK : A function that delays an action until later 
 An action creator function that does NOT return the action itself but another function which eventually return the function
+
+If we modify data in server and then we opened our application which was already opened and then move pages back and fourth but the data is not yet updated. Because those pages are not rerendering React Navigation saves the screens which we already which we visit in memory. When it is first time visit then it is loading. else it just showing the previous one from meomory

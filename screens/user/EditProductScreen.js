@@ -5,12 +5,14 @@ import {
   ScrollView,
   Alert,
   KeyboardAvoidingView,
+  ActivityIndicator
 } from "react-native";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useSelector, useDispatch } from "react-redux";
 import * as productActions from "../../store/actions/products";
 import Input from "../../components/UI/Input";
+import Colors from "../../constants/Colors";
 
 const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
 //Created outside to prevent unnecessary renders
@@ -40,6 +42,8 @@ const formReducer = (state, action) => {
 };
 
 const EditProductScreen = (props) => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [error,setError] = useState()
   const prodId = props.navigation.getParam("productId");
 
   const editedProduct = useSelector((state) =>
@@ -68,23 +72,38 @@ const EditProductScreen = (props) => {
 
   const { title, description, price, imageUrl } = formState.inputValues;
 
-  const submitHandler = useCallback(() => {
+  useEffect(() => {
+    if (error) {
+      
+      Alert.alert('An error occured.!',error,[{text : "Okay"}])
+    }
+  }, [error])
+
+  const submitHandler = useCallback(async () => {
     if (!formState.formIsValid) {
       Alert.alert("Wrong Input!", "Please check errors in form", [
         { text: "OK" },
       ]);
       return;
     }
-    if (editedProduct) {
-      dispatch(
-        productActions.updateProduct(prodId, title, description, imageUrl)
-      );
-    } else {
-      dispatch(
-        productActions.createProduct(title, description, imageUrl, +price)
-      );
+    setError(null)
+    setIsLoading(true)
+    try {
+
+      if (editedProduct) {
+        await dispatch(
+          productActions.updateProduct(prodId, title, description, imageUrl)
+        );
+      } else {
+        await dispatch(
+          productActions.createProduct(title, description, imageUrl, +price)
+        );
+      }
+      props.navigation.goBack();
+    } catch (err) {
+      setError(err.message)
     }
-    props.navigation.goBack();
+    setIsLoading(false)
   }, [dispatch, editedProduct, prodId, formState]);
   // console.log(formState);
 
@@ -103,6 +122,14 @@ const EditProductScreen = (props) => {
     },
     [dispatchFormState]
   );
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator color={Colors.primary} size='large'/>
+      </View>
+    )
+  }
 
   return (
     <KeyboardAvoidingView
@@ -192,6 +219,11 @@ const styles = StyleSheet.create({
   form: {
     margin: 20,
   },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems : "center"
+  }
 });
 
 export default EditProductScreen;

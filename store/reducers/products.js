@@ -4,6 +4,7 @@ import {
   CREATE_PRODUCT,
   DELETE_PRODUCT,
   UPDATE_PRODUCT,
+  SET_PRODUCTS
 } from "../actions/products";
 
 const initialState = {
@@ -13,6 +14,11 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case SET_PRODUCTS:
+      return {
+        availableProducts: action.products,
+        userProducts : action.products.filter(product => product.ownerId === 'u1')
+      }
     case CREATE_PRODUCT:
       const newProduct = new Product(
         // new Date().toString(), Previously we generated locally but now we are generating from server
