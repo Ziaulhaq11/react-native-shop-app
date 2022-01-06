@@ -27,6 +27,13 @@ And also for DrawerNavigator (also used later in this module):
 npm install --save react-navigation-drawer
 import { createDrawerNavigator } from 'react-navigation-drawer';
 
+Async storage
+expo install @react-native-async-storage/async-storage
+
+And import like this
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 THUNK : A function that delays an action until later 
 An action creator function that does NOT return the action itself but another function which eventually return the function
 

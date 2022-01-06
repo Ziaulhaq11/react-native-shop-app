@@ -1,30 +1,37 @@
+import {
+  createAppContainer,
+  createSwitchNavigator,
+} from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
+import { Platform, SafeAreaView, Button, View } from "react-native";
+import Colors from "../constants/Colors";
+import ProductOverviewScreen from "../screens/shop/ProductsOverviewScreen";
+import ProductDetailScreen from "../screens/shop/ProductDetailScreen";
+import CartScreen from "../screens/shop/CartScreen";
+import OrderScreen from "../screens/shop/OrderScreen";
+import { createDrawerNavigator , DrawerNavigatorItems} from "react-navigation-drawer";
+import { Ionicons } from "@expo/vector-icons";
+import UserProductScreen from "../screens/user/UserProductsScreen";
+import React from "react";
+import EditProductScreen from "../screens/user/EditProductScreen";
+import AuthScreen from "../screens/user/AuthScreen";
+import startUpScreen from "../screens/StartUpScreen";
+import { useDispatch } from "react-redux";
+import * as authActions from '../store/actions/auth'
 
-import { createAppContainer } from 'react-navigation'
-import { createStackNavigator } from 'react-navigation-stack'
-import { Platform } from 'react-native'
-import Colors from '../constants/Colors'
-import ProductOverviewScreen from '../screens/shop/ProductsOverviewScreen'
-import ProductDetailScreen from '../screens/shop/ProductDetailScreen'
-import CartScreen from '../screens/shop/CartScreen'
-import OrderScreen from '../screens/shop/OrderScreen'
-import { createDrawerNavigator } from 'react-navigation-drawer'
-import { Ionicons } from '@expo/vector-icons'
-import UserProductScreen from '../screens/user/UserProductsScreen'
-import React from 'react'
-import EditProductScreen from '../screens/user/EditProductScreen'
 
 const defaultNavOptions = {
-        headerStyle: {
-            backgroundColor : Platform.OS === 'android' ?  Colors.primary : ""
-        },
-        headerTitleStyle: {
-            // fontFamily : "OpenSansBold"
-        },
-        headerBackTitleStyle: {
-            // fontFamily : "OpenSans" for ios on back button there is a text of 
-        },
-        headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primary
-    }
+  headerStyle: {
+    backgroundColor: Platform.OS === "android" ? Colors.primary : "",
+  },
+  headerTitleStyle: {
+    // fontFamily : "OpenSansBold"
+  },
+  headerBackTitleStyle: {
+    // fontFamily : "OpenSans" for ios on back button there is a text of
+  },
+  headerTintColor: Platform.OS === "android" ? "white" : Colors.primary,
+};
 
 const ProductsNavigator = createStackNavigator(
   {
@@ -47,23 +54,28 @@ const ProductsNavigator = createStackNavigator(
   }
 );
 
-const OrdersNavigator = createStackNavigator({
-    Orders : OrderScreen
-}, {
+const OrdersNavigator = createStackNavigator(
+  {
+    Orders: OrderScreen,
+  },
+  {
     navigationOptions: {
-        
-        drawerIcon : drawerConfig => (
-            <Ionicons name={Platform.OS === 'android' ? 'md-list' : 'ios-list'} size={23} color={drawerConfig.tintColor}/>
-        )
-    } ,
-    defaultNavigationOptions : defaultNavOptions
-}) 
-
+      drawerIcon: (drawerConfig) => (
+        <Ionicons
+          name={Platform.OS === "android" ? "md-list" : "ios-list"}
+          size={23}
+          color={drawerConfig.tintColor}
+        />
+      ),
+    },
+    defaultNavigationOptions: defaultNavOptions,
+  }
+);
 
 const AdminNavigator = createStackNavigator(
   {
     UserProducts: UserProductScreen,
-    EditProduct : EditProductScreen
+    EditProduct: EditProductScreen,
   },
   {
     navigationOptions: {
@@ -77,17 +89,49 @@ const AdminNavigator = createStackNavigator(
     },
     defaultNavigationOptions: defaultNavOptions,
   }
-); 
+);
 
-const ShopNavigator = createDrawerNavigator({
+const ShopNavigator = createDrawerNavigator(
+  {
     Products: ProductsNavigator,
-  Orders: OrdersNavigator,
-    Admin : AdminNavigator
-}, {
+    Orders: OrdersNavigator,
+    Admin: AdminNavigator,
+  },
+  {
     contentOptions: {
-        activeTintColor : Colors.primary
+      activeTintColor: Colors.primary,
+    },
+    contentComponent: props => {
+      const dispatch = useDispatch()
+      return (
+      <View style={{ flex: 1 ,paddingTop : 20}}>
+        <SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
+          {/* if we dont write this line our menu items will be gone  */}
+          <DrawerNavigatorItems {...props} /> 
+            <Button title="Logout" color={Colors.primary} onPress={() => {
+              dispatch(authActions.logout())
+              // props.navigation.navigate('Auth') because we are doing this in navigationcontainer
+          }}/>
+        </SafeAreaView>
+      </View>
+      )
     }
-})
+  }
+);
 
+const AuthNavigator = createStackNavigator(
+  {
+    Auth: AuthScreen,
+  },
+  {
+    defaultNavigationOptions: defaultNavOptions,
+  }
+);
+
+const MainNavigator = createSwitchNavigator({
+  Startup: startUpScreen,
+  Auth: AuthNavigator,
+  Shop: ShopNavigator,
+});
 // export default createAppContainer(ProductsNavigator)
-export default createAppContainer(ShopNavigator)
+export default createAppContainer(MainNavigator);

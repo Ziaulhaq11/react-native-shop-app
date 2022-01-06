@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, Button ,Alert} from "react-native";
+import { FlatList, Button, Alert, View, Text } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../../components/shop/ProductItem";
@@ -16,19 +16,25 @@ const UserProductScreen = (props) => {
   };
 
   const deleteHandler = (id) => {
-    Alert.alert('Are you sure?', 'Do you really want to delete this item?',
-      [
+    Alert.alert("Are you sure?", "Do you really want to delete this item?", [
       { text: "No", style: "default" },
       {
-        text: "Yes", style: "destructive",
+        text: "Yes",
+        style: "destructive",
         onPress: () => {
-          dispatch(productActions.deleteProduct(id))
-        }
-        }
-      ]
-    )
-  }
+          dispatch(productActions.deleteProduct(id));
+        },
+      },
+    ]);
+  };
 
+  if (userProducts.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>No Products found</Text>
+      </View>
+    );
+  }
 
   return (
     <FlatList
@@ -39,8 +45,8 @@ const UserProductScreen = (props) => {
           image={itemData.item.imageUrl}
           title={itemData.item.title}
           price={itemData.item.price}
-              onSelect={() => {
-              editProductHandler(itemData.item.id);
+          onSelect={() => {
+            editProductHandler(itemData.item.id);
           }}
         >
           <Button
@@ -52,9 +58,8 @@ const UserProductScreen = (props) => {
           <Button
             title="Delete"
             onPress={() => {
-              deleteHandler(itemData.item.id)
-              }
-            }
+              deleteHandler(itemData.item.id);
+            }}
           />
         </ProductItem>
       )}
@@ -82,7 +87,7 @@ UserProductScreen.navigationOptions = (navData) => {
           title="Add"
           iconName={Platform.OS === "android" ? "md-create" : "ios-create"}
           onPress={() => {
-            navData.navigation.navigate('EditProduct')
+            navData.navigation.navigate("EditProduct");
           }}
         />
       </HeaderButtons>

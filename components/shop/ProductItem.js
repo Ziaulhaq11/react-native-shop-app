@@ -11,7 +11,6 @@ import {
 import Card from "../UI/Card";
 
 const ProductItem = (props) => {
-  console.log(props)
   let TouchableCmp = TouchableOpacity;
   if (Platform.OS === "android" && Platform.Version >= 21) {
     TouchableCmp = TouchableNativeFeedback; //Touchable Opacity doesnt working properly on Android and only TouchableNativeFeedback working but its looking like image is not having that effect. To Fix that we used "useForeground" instead of background it effects on foreground
