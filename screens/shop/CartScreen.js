@@ -19,6 +19,7 @@ const CartScreen = (props) => {
         productPrice: state.cart.items[key].productPrice,
         quantity: state.cart.items[key].quantity,
         sum: state.cart.items[key].sum,
+        productPushToken : state.cart.items[key].pushToken
       });
     }
     return transformedCartItems.sort((a,b) => a.productId > b.productId ? 1 : -1);
@@ -26,6 +27,7 @@ const CartScreen = (props) => {
   const dispatch = useDispatch();
 
   const sendOrderHandler = async () => {
+    console.log(cartItems)
     setIsLoading(true)
     await dispatch(orderActions.addOrder(cartItems, cartTotalAmount))
     setIsLoading(false)

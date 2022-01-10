@@ -23,6 +23,7 @@ const ProductOverviewScreen = (props) => {
   const [error,setError] = useState()
 
   const products = useSelector((state) => state.products.availableProducts);
+  console.log(products)
   const dispatch = useDispatch();
 
   const loadProducts = useCallback(async () => {

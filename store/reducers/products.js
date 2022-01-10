@@ -24,6 +24,7 @@ export default (state = initialState, action) => {
         // new Date().toString(), Previously we generated locally but now we are generating from server
         action.productData.id,
         action.productData.ownerId,
+        action.productData.pushToken,
         action.productData.title,
         action.productData.imageUrl,
         action.productData.description,
@@ -41,6 +42,7 @@ export default (state = initialState, action) => {
       const updatedProduct = new Product(
         action.pid,
         state.userProducts[productIndex].ownerId,
+        state.userProducts[productIndex].pushToken,
         action.productData.title,
         action.productData.imageUrl,
         action.productData.description,

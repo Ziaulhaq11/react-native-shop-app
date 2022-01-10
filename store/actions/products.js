@@ -1,9 +1,11 @@
 import Product from "../../models/product";
-
+import * as Notifications from "expo-notifications";
+import * as Permissions from "expo-permissions";
 export const DELETE_PRODUCT = "DELETE_PRODUCT";
 export const CREATE_PRODUCT = "CREATE_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 export const SET_PRODUCTS = "SET_PRODUCTS";
+
 
 export const fetchProducts = () => {
   
@@ -24,10 +26,11 @@ export const fetchProducts = () => {
           new Product(
             key,
             resData[key].ownerId,
+            resData[key].ownerPushToken,
             resData[key].title,
             resData[key].imageUrl,
             resData[key].description,
-            resData[key].price
+            resData[key].price,
           )
         );
       }
@@ -62,8 +65,18 @@ export const deleteProduct = (productId) => {
 };
 
 export const createProduct = (title, description, imageUrl, price) => {
-  return async (dispatch,getState) => {
+  return async (dispatch, getState) => {
+    let pushToken;
     //Any async code you can run
+    let statusObj = await Permissions.getAsync(Permissions.NOTIFICATIONS)
+    if (statusObj.status !== 'granted') {
+      const statusObj = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    }
+    if (statusObj.status !== "granted") {
+      pushToken = null;
+    } else {
+      pushToken = (await Notifications.getExpoPushTokenAsync()).data;
+    }
     //Here in url products/json we added so firebase automatically create folder for this by the name
     const token = getState().auth.token;
     const userId = getState().auth.userId
@@ -79,7 +92,8 @@ export const createProduct = (title, description, imageUrl, price) => {
           description,
           imageUrl,
           price,
-          ownerId : userId
+          ownerId: userId,
+          ownerPushToken : pushToken
         }),
       }
     );
@@ -94,7 +108,8 @@ export const createProduct = (title, description, imageUrl, price) => {
         description,
         imageUrl,
         price,
-        ownerId : userId
+        ownerId: userId,
+        pushToken : pushToken
       },
     });
   };
@@ -117,6 +132,7 @@ export const updateProduct = (id, title, description, imageUrl) => {
         }),
       }
     );
+    console.log(response)
 
     if (!response.ok) {
       throw new Error('Something went wrong!')
